@@ -24,7 +24,7 @@ jobs:
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest
+        pip install flake8 pytest pytest-cov
         pip install -r requirements.txt
     
     - name: Lint with flake8
@@ -34,9 +34,15 @@ jobs:
         # exit-zero treats all errors as warnings
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     
-    - name: Run Python tests
+    - name: Run tests with coverage
       run: |
-        pytest
+        pytest --cov=src --cov-report=xml --cov-report=term-missing tests/
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: true
 
   frontend:
     runs-on: ubuntu-latest
@@ -49,13 +55,22 @@ jobs:
       with:
         node-version: '14'
     
+    - name: Install frontend dependencies
+      run: |
+        cd src/frontend
+        npm install
+    
     - name: Check frontend syntax
       run: |
         cd src/frontend
         npx eslint . --ext .js,.jsx || true
     
+    - name: Run frontend tests
+      run: |
+        cd src/frontend
+        npm test || true
+    
     - name: Verify frontend builds
       run: |
         cd src/frontend
-        echo "Frontend build verification placeholder"
-        # Add actual build commands when we set up npm
+        npm run build || echo "Build verification placeholder"
