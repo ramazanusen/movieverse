@@ -105,13 +105,32 @@ HOST=localhost
 IMDB_DATA_DIR=./data
 ```
 
+## Deployment
+
+This project uses automated CI/CD pipelines with GitHub Actions:
+
+### Continuous Integration (CI)
+- Automated testing on Python 3.8 and 3.9
+- Code style checking with flake8
+- Code coverage reporting
+- Frontend build verification
+
+### Continuous Deployment (CD)
+- Backend automatically deploys to Render.com
+- Frontend automatically deploys to Vercel
+- Deployments trigger on pushes to main branch
+
+Live URLs:
+- Frontend: [Vercel App URL]
+- Backend API: [Render App URL]
+
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Create a new branch for your feature
+2. Make your changes
+3. Create a Pull Request
+4. CI checks will run automatically
+5. Once approved and merged, CD will deploy your changes
 
 ## License
 
