@@ -7,6 +7,7 @@ on:
 permissions:
   contents: read
   deployments: write
+  pull-requests: write
     
 jobs:
   deploy-backend:
@@ -31,6 +32,7 @@ jobs:
     permissions:
       contents: read
       deployments: write
+      pull-requests: write
     
     steps:
     - uses: actions/checkout@v4
@@ -57,14 +59,12 @@ jobs:
       run: npm run build
 
     - name: Deploy to Vercel
-      uses: BetaHuhn/deploy-to-vercel-action@v1
+      uses: vercel/actions/deploy@v1
       with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        WORKING_DIRECTORY: src/frontend
-        PRODUCTION: true
+        token: ${{ secrets.VERCEL_TOKEN }}
+        org-id: ${{ secrets.VERCEL_ORG_ID }}
+        project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: src/frontend
 
   verify:
     runs-on: ubuntu-latest
