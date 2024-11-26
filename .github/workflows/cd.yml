@@ -59,12 +59,15 @@ jobs:
       run: npm run build
 
     - name: Deploy to Vercel
-      uses: vercel/actions/deploy@v1
+      uses: amondnet/vercel-action@v25.1.0
       with:
-        token: ${{ secrets.VERCEL_TOKEN }}
-        org-id: ${{ secrets.VERCEL_ORG_ID }}
-        project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
         working-directory: src/frontend
+        vercel-args: '--prod'
+        github-comment: false
+        github-deployment: false
 
   verify:
     runs-on: ubuntu-latest
