@@ -61,6 +61,19 @@ jobs:
     - name: Install Vercel CLI
       run: npm install --global vercel@latest
 
+    - name: Pull Vercel Environment Information
+      env:
+        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      working-directory: src/frontend
+      run: vercel pull --yes --environment=production --token=${VERCEL_TOKEN}
+
+    - name: Set Environment Variables
+      env:
+        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      run: |
+        vercel env add REACT_APP_API_URL production ${{ secrets.API_URL }} --token=${VERCEL_TOKEN}
+
     - name: Deploy to Vercel
       env:
         VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -72,7 +85,8 @@ jobs:
           --token ${VERCEL_TOKEN} \
           --scope ${VERCEL_ORG_ID} \
           --yes \
-          --prod
+          --prod \
+          --build-env REACT_APP_API_URL=${{ secrets.API_URL }}
 
   verify:
     runs-on: ubuntu-latest
