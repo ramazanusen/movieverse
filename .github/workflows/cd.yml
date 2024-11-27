@@ -64,17 +64,39 @@ jobs:
       run: npm install --global vercel@latest
 
     - name: Deploy to Vercel
+      id: deploy
       env:
         VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
         VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       working-directory: src/frontend
       run: |
-        vercel deploy ./build \
+        echo "Deploying to Vercel..."
+        DEPLOYMENT_URL=$(vercel deploy ./build \
           --token ${VERCEL_TOKEN} \
           --scope ${VERCEL_ORG_ID} \
           --yes \
-          --prod
+          --prod)
+        echo "Deployment URL: $DEPLOYMENT_URL"
+        echo "::set-output name=deployment_url::$DEPLOYMENT_URL"
+
+    - name: Display Deployment URL
+      run: |
+        echo "Your app has been deployed to: ${{ steps.deploy.outputs.deployment_url }}"
+        echo "Visit the URL to verify the deployment"
+
+    - name: Health Check
+      run: |
+        echo "Waiting for deployment to stabilize..."
+        sleep 30  # Wait for 30 seconds
+        HEALTH_CHECK_URL="${{ steps.deploy.outputs.deployment_url }}"
+        HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $HEALTH_CHECK_URL)
+        if [ $HTTP_STATUS -eq 200 ]; then
+          echo " Deployment is healthy (HTTP 200)"
+        else
+          echo " Deployment might have issues (HTTP $HTTP_STATUS)"
+          echo "Please check the deployment at: $HEALTH_CHECK_URL"
+        fi
 
   verify:
     runs-on: ubuntu-latest
